@@ -1,7 +1,8 @@
 import pandas as pd
 import os
-# import util_functions as uf
 import sys
+sys.path.append("..")
+import util_functions as uf
 
 
 def trips_to_df(cabi_trip_dir):
