@@ -46,7 +46,7 @@ if __name__ == "__main__":
 
     # Connect to AWS
     #uf.set_env_path()
-    #conn, cur = uf.aws_connect()
+    conn, cur = uf.local_connect()
     # Loop through all CSVs in cabi trip data folder
     cabi_trip_dir = '../data'
     # Convert trip data from CSV to dataframe
