@@ -8,3 +8,7 @@
 plots_output/
 
 *.html
+
+plots/\.ipynb_checkpoints/
+
+*.png

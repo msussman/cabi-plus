@@ -8,9 +8,7 @@ import json
 import requests
 from datetime import date
 from geopy.distance import great_circle
-
-alt.renderers.enable('notebook')
-alt.themes.enable('opaque')
+import seaborn as sns
 
 
 def query(con):
@@ -70,6 +68,12 @@ if __name__ == "__main__":
     
     # Average MPH by CaBi/CaBi Plus
     print(df[df['distance'] > 0].groupby('CaBi Bike Type')['mph'].mean())
+
+    sns.distplot(df[df['CaBi Bike Type'] == 'CaBi Plus']['distance'],  hist=False)
+    sns.distplot(df[df['CaBi Bike Type'] == 'CaBi Classic']['distance'],  hist=False)
+    
+    sns.plt.show()
+    sys.exit()    
 
     # Average distance by day
     dist_chart_cols = ['distance', 'date', 'CaBi Bike Type']
