@@ -57,6 +57,7 @@ df['date'] = pd.to_datetime(df['date'])
 # Convert timedelta to float of hours and minutes
 df['Trip Duration (hours)'] = df['total_trip_dur'] / np.timedelta64(1, 'h')
 df['Trip Duration (minutes)'] = df['total_trip_dur'] / np.timedelta64(1, 'm')
+print(df[df['Trip Duration (minutes)'] > 0].groupby('CaBi Bike Type')['Trip Duration (minutes)'].mean())
 # Calculate distance between coordinates
 df['distance'] = df.apply(lambda x: great_circle((x['start_lat'], x['start_lon']), 
                                                            (x['end_lat'], x['end_lon'])).miles, axis = 1)

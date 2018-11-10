@@ -49,7 +49,7 @@ def cabi_util_rate(con):
                             THEN cabi_bikes.bike_number ELSE NULL END) as cabi_plus_bikes
                             FROM generate_series(
                                         '2018-09-05',
-                                        '2018-9-30',
+                                        '2018-10-31',
                                         interval '1 day') as d    
                             /* Total CaBi Fleet Count*/
                             LEFT JOIN cabi_bikes as cabi_bikes
@@ -85,7 +85,7 @@ if __name__ == "__main__":
     melted_df = melted_df.merge(weather_df, on='date', how='left')
     # Utilization Rate Chart    
     base = alt.Chart(melted_df).encode(
-    alt.X('date',
+    alt.X('date', title=" ",
         #axis=alt.Axis(format='%b'),
         scale=alt.Scale(zero=False)
         )
@@ -103,16 +103,16 @@ if __name__ == "__main__":
     )
     
     util_chart = alt.layer(line, bar).resolve_scale(y='independent')
-    util_chart.save('cabi_util_rate.html')
+    util_chart.save('../plots_output/cabi_util_rate.html')
 
     # CaBi Plus Trips % Above CaBi
     df['CaBi Plus Trips Per Bike, % Above CaBi'] = (df['CaBi Plus'] - df['CaBi Classic'])/ df['CaBi Classic']
     df.to_csv('cabi_util_rate.csv')
 
     util_perc_chart = alt.Chart(df).mark_line(opacity=0.6).encode(
-                alt.X('date'),
+                alt.X('date', title=" "),
                 alt.Y('CaBi Plus Trips Per Bike, % Above CaBi', axis=alt.Axis(format='%'))
                 )
-    util_perc_chart.save('cabi_util_perc.html')
+    util_perc_chart.save('../plots_output/cabi_util_perc.html')
      
 
