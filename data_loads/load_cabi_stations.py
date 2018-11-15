@@ -15,6 +15,14 @@ def pull_station_info():
     return station_df
 
 
+def prior_cabi_stations(con):
+    # queries bikeshare db
+    return pd.read_sql("""
+                            SELECT *
+                            FROM cabi_stations
+                            ;
+                        """, con=con)
+
 def create_cabi_stations(cur):
     # This script creates the CaBi Stations Geo Temp AWS table
     cur.execute("""
@@ -39,6 +47,10 @@ if __name__ == "__main__":
     station_df['region_id'] = np.where(station_df['region_id'].isnull(), 42, station_df['region_id'])
     station_df['region_id'] = station_df['region_id'].astype(int)
     keep_cols = ['capacity', 'lat', 'lon', 'name', 'region_id', 'short_name', 'station_id' ]
+    # Merge with Prior cabi_stations table and dedup
+    prior_station_df = prior_cabi_stations(con=conn)
+    station_df = pd.concat([station_df, prior_station_df], axis=0)
+    station_df.drop_duplicates(['short_name'], inplace=True)
     # Output dataframe as CSV
     outname = "CaBi_Stations"
     station_df[keep_cols].to_csv(outname + ".csv", index=False, sep='|')

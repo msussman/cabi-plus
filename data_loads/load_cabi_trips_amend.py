@@ -30,7 +30,7 @@ if __name__ == "__main__":
     combined_df.drop(['index'], axis=1, inplace=True) 
     # Output dataframe as CSV 
     # Define start and end months based on file names 
-    outname = "CaBi_Trip_Data_201805_09" 
+    outname = "CaBi_Trip_Data_2018010" 
     combined_df.to_csv(outname + ".csv", index=False, sep='|') 
  
     # Load to Database 

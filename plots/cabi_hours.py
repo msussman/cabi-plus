@@ -28,6 +28,9 @@ def query(con):
                           ON extract('DOW' FROM trips.start_date) = hours.day_of_week 
                           AND trips.start_date::time BETWEEN hours.start_time AND hours.end_time
                           WHERE start_date::date >= '2018-09-05'
+                          AND extract('DOW' FROM trips.start_date) > 0
+                          AND extract('DOW' FROM trips.start_date) < 6
+
                           ),
 
                           cabi_trip_type_total AS (
@@ -56,8 +59,6 @@ if __name__ == "__main__":
     # Return Dataframe of Percent of Trips by ANC
     df = query(con=conn)
     df['Percent of Total Weekly Trips'] = df['cabi_trips'] / df['cabi_trip_type_total']
-    # Change Value of Sunday to 7 instead of 0
-    df['Day of Week'] = np.where(df['Day of Week'] == 0, 7, df['Day of Week'])
     # Make Value of Metro Operating Hours Status properized
     proper_dict = {'no_service':'No Metro Service',
                    'regular': 'Regular Operating Hours',
@@ -72,11 +73,13 @@ if __name__ == "__main__":
         palette='muted', col_order=['CaBi Classic, Member', 'CaBi Classic, Casual', 'CaBi Plus'],
         legend=False, size=4, aspect=1)
     g.set_xticklabels(
-            ['Mon', 'Tue', 'Wed', 'Thur', 'Fri', 'Sat', 'Sun'],
+            ['Mon', 'Tue', 'Wed', 'Thur', 'Fri'],
             fontsize=8)
     g.set_xlabels('', fontsize=10)
     g.set_ylabels('Percent of Total Trips', fontsize=10)
-    plt.legend(bbox_to_anchor=(0.3, -0.2), borderaxespad=0., ncol=3, title='Metro Operating Hours')
+    plt.legend(bbox_to_anchor=(0.3, -0.1), borderaxespad=0., ncol=3, title='Metro Operating Hours')
+    plt.subplots_adjust(top=0.8)
+    g.fig.suptitle("Percent of Weekday CaBi Trips, \n by Day of Week, Metro Operating Hours", fontsize=12)
     g.savefig("../plots_output/cabi_hours.png")
 
 

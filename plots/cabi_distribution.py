@@ -57,6 +57,7 @@ df['date'] = pd.to_datetime(df['date'])
 # Convert timedelta to float of hours and minutes
 df['Trip Duration (hours)'] = df['total_trip_dur'] / np.timedelta64(1, 'h')
 df['Trip Duration (minutes)'] = df['total_trip_dur'] / np.timedelta64(1, 'm')
+print(df[df['Trip Duration (minutes)'] > 0].groupby('CaBi Bike Type')['Trip Duration (minutes)'].mean())
 # Calculate distance between coordinates
 df['distance'] = df.apply(lambda x: great_circle((x['start_lat'], x['start_lon']), 
                                                            (x['end_lat'], x['end_lon'])).miles, axis = 1)
@@ -74,7 +75,7 @@ fig, axes = plt.subplots(figsize=(20,5), ncols=3, nrows=1)
 left   =  0.125  # the left side of the subplots of the figure
 right  =  0.9    # the right side of the subplots of the figure
 bottom =  0.1    # the bottom of the subplots of the figure
-top    =  0.9    # the top of the subplots of the figure
+top    =  0.8    # the top of the subplots of the figure
 wspace =  .25    # the amount of width reserved for blank space between subplots
 hspace =  1.1    # the amount of height reserved for white space between subplots
 
@@ -93,11 +94,9 @@ sns.set_style("darkgrid")
 # The amount of space above titles
 y_title_margin = 1.0
 
-plt.suptitle("Distribution of CaBi Member Trips", y = 1.09, fontsize=20)
-
 axes[0].set_title("Distance (miles), <= 5 miles", y = y_title_margin)
 axes[1].set_title("Duration (minutes), <= 60 minutes", y = y_title_margin)
-axes[2].set_title("Miles per Hour, <= 15.5 mph", y = y_title_margin)
+axes[2].set_title("Speed (mph), <= 15.5 mph", y = y_title_margin)
 
 # Distance
 dist_df = df[df['distance'] <= 5]
@@ -147,5 +146,8 @@ sns.distplot(mph_df[mph_df['CaBi Bike Type'] == 'CaBi Plus']['mph'],
              hist=False, 
              label="CaBi Plus", 
              color='black')
+
+plt.suptitle("Density of CaBi Member Trips", fontsize=20)
+
 plt.savefig('../plots_output/cabi_distribution.png')
 
