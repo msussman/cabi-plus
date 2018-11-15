@@ -88,6 +88,6 @@ if __name__ == "__main__":
     )
     
     chart = alt.layer(line, bar).resolve_scale(y='independent')
-    chart.save('cabi_daily_perc.html')
+    chart.save('../plots_output/cabi_daily_perc.html')
      
 

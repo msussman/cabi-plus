@@ -44,7 +44,7 @@ def query(con):
                             THEN cabi_bikes.bike_number ELSE NULL END) / COUNT(DISTINCT cabi_bikes.bike_number) :: float) as "% of Fleet"
                             FROM  generate_series(
                             '2018-09-05',
-                            '2018-9-30',
+                            '2018-10-31',
                             interval '1 day') as d
                             /* CaBi Fleet*/
                             LEFT JOIN cabi_bikes as cabi_bikes
@@ -99,4 +99,4 @@ if __name__ == "__main__":
 
     chart = alt.vconcat(upper, lower).resolve_scale(color='independent')
 
-    chart.save('cabi_trips_fleet_perc.html')
+    chart.save('../plots_output/cabi_trips_fleet_perc.html')
