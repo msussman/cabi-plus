@@ -79,7 +79,7 @@ if __name__ == "__main__":
     g.set_ylabels('Percent of Total Trips', fontsize=10)
     plt.legend(bbox_to_anchor=(0.3, -0.1), borderaxespad=0., ncol=3, title='Metro Operating Hours')
     plt.subplots_adjust(top=0.8)
-    g.fig.suptitle("Percent of Weekday CaBi Trips, \n by Day of Week, Metro Operating Hours", fontsize=12)
-    g.savefig("../plots_output/cabi_hours.png")
+    #g.fig.suptitle("Percent of Weekday CaBi Trips, \n by Day of Week, Metro Operating Hours", fontsize=12)
+    g.savefig("../plots_output/month2_tweets/tweet3_cabi_hours.png")
 
 

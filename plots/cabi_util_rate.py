@@ -104,28 +104,9 @@ if __name__ == "__main__":
     weather_df = df[['date', 'Probability of Rain (%)']]
     fleet_df = fleet_df.merge(weather_df, on='date', how='left')
 
-    '''Bikes Used'''
-
-    df['CaBi Classic'] = df['cabi_trips'] / df['cabi_classic_bikes']
-    df['CaBi Plus'] =  df['cabi_plus_trips'] / df['cabi_plus_bikes']
-    print("CaBi Classic Avg Trips per Bike (Bikes Used):")
-    print(df['cabi_trips'].sum() / df['cabi_classic_bikes'].sum())
-    print("CaBi Plus Avg Trips per Bike (Bikes Used):")
-    print(df['cabi_plus_trips'].sum() / df['cabi_plus_bikes'].sum())
-    
-    used_df =  pd.melt(df, id_vars=['date'],
-                            value_vars=[
-                                        'CaBi Classic',
-                                        'CaBi Plus'],
-                            var_name = 'CaBi Bike Type'
-                            )
-    used_df = used_df.rename(columns = {'value':'Daily Trips per Bike'})
-    # Merge Probablility of Rain onto melted_Df
-    weather_df = df[['date', 'Probability of Rain (%)']]
-    used_df = used_df.merge(weather_df, on='date', how='left')
     
     # Fleet Chart    
-    base = alt.Chart(fleet_df, title= 'Trips per Bike (Total Fleet)').encode(
+    base = alt.Chart(fleet_df).encode(
     alt.X('date', title=" ",
         #axis=alt.Axis(format='%b'),
         scale=alt.Scale(zero=False)
@@ -144,32 +125,5 @@ if __name__ == "__main__":
     )
 
     fleet_chart = alt.layer(line, bar).resolve_scale(y='independent')
-
-    #Bikes Used Chart
-    base = alt.Chart(used_df, title= 'Trips per Bike (Bikes Used)').encode(
-    alt.X('date', title=" ",
-        #axis=alt.Axis(format='%b'),
-        scale=alt.Scale(zero=False)
-        )
-    )
-
-    bar = base.mark_bar(opacity=0.2).encode(
-        alt.Y('Probability of Rain (%)'),
-    )
-
-    line =  base.mark_line(opacity=0.8).encode(
-        alt.Y('Daily Trips per Bike', scale=alt.Scale(domain=[0, 12])),
-        alt.Color('CaBi Bike Type',
-        legend=alt.Legend(title=None, orient='top-left'),
-        scale=alt.Scale(range=['red', 'black']))
-    )
-
-    used_chart = alt.layer(line, bar).resolve_scale(y='independent')
-
-    # Comvbine charts and save
-
-    util_chart = fleet_chart | used_chart
-
-    util_chart.save('../plots_output/cabi_util_rate.html')
-     
+    fleet_chart.save('../plots_output/month2_tweets/tweet2_cabi_util_rate.html')
 

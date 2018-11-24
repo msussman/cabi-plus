@@ -9,6 +9,8 @@ from geopy.distance import great_circle
 import seaborn as sns
 import matplotlib.pyplot as plt
 
+sns.set_style("darkgrid")
+
 
 
 def query(con):
@@ -70,84 +72,67 @@ print(df[df['distance'] > 0].groupby('CaBi Bike Type')['distance'].mean())
 print(df[df['distance'] > 0].groupby('CaBi Bike Type')['mph'].mean())
 
 
-fig, axes = plt.subplots(figsize=(20,5), ncols=3, nrows=1)
-
-left   =  0.125  # the left side of the subplots of the figure
-right  =  0.9    # the right side of the subplots of the figure
-bottom =  0.1    # the bottom of the subplots of the figure
-top    =  0.8    # the top of the subplots of the figure
-wspace =  .25    # the amount of width reserved for blank space between subplots
-hspace =  1.1    # the amount of height reserved for white space between subplots
-
-plt.subplots_adjust(
-    left    =  left, 
-    bottom  =  bottom, 
-    right   =  right, 
-    top     =  top, 
-    wspace  =  wspace, 
-    hspace  =  hspace
-)
-
-
-sns.set_style("darkgrid")
+fig, axes = plt.subplots(figsize=(10,5), ncols=1, nrows=1)
 
 # The amount of space above titles
 y_title_margin = 1.0
 
-axes[0].set_title("Distance (miles), <= 5 miles", y = y_title_margin)
-axes[1].set_title("Duration (minutes), <= 60 minutes", y = y_title_margin)
-axes[2].set_title("Speed (mph), <= 15.5 mph", y = y_title_margin)
-
+axes.set_title("Distance (miles), <= 5 miles", y = y_title_margin)
 # Distance
 dist_df = df[df['distance'] <= 5]
 sns.distplot(dist_df[dist_df['CaBi Bike Type'] == 'CaBi Classic']['distance'],  
-             ax = axes[0],
+             ax = axes,
              axlabel = False,
              hist=False,             
              label="CaBi Classic", 
              color='red')  
 
 sns.distplot(dist_df[dist_df['CaBi Bike Type'] == 'CaBi Plus']['distance'], 
-             ax = axes[0],
+             ax = axes,
              axlabel = False,
              hist=False,
              label="CaBi Plus", 
              color='black')
+plt.savefig('../plots_output/month2_tweets/tweet4_cabi_distance.png')
+
 
 # Duration
+fig, axes = plt.subplots(figsize=(10,5), ncols=1, nrows=1)
+axes.set_title("Duration (minutes), <= 60 minutes", y = y_title_margin)
 dur_df = df[df['Trip Duration (minutes)'] <= 60]
 
 sns.distplot(dur_df[dur_df['CaBi Bike Type'] == 'CaBi Classic']['Trip Duration (minutes)'],  
-             ax = axes[1],
+             ax = axes,
              axlabel = False,
              hist=False, 
              label="CaBi Classic", 
              color='red')  
 sns.distplot(dur_df[dur_df['CaBi Bike Type'] == 'CaBi Plus']['Trip Duration (minutes)'], 
-             ax = axes[1],
+             ax = axes,
              axlabel = False,
              hist=False, 
              label="CaBi Plus", 
              color='black')
+plt.savefig('../plots_output/month2_tweets/tweet5_cabi_duration.png')
 
 #MPH
+fig, axes = plt.subplots(figsize=(10,5), ncols=1, nrows=1)
+axes.set_title("Speed (mph), <= 15.5 mph", y = y_title_margin)
 
 mph_df = df[(df['mph'] > 0) & (df['mph'] < 15.5)]
 
 sns.distplot(mph_df[mph_df['CaBi Bike Type'] == 'CaBi Classic']['mph'],  
-             ax = axes[2],
+             ax = axes,
              axlabel = False,
              hist=False, 
              label="CaBi Classic", 
              color='red')  
 sns.distplot(mph_df[mph_df['CaBi Bike Type'] == 'CaBi Plus']['mph'], 
-             ax = axes[2],
+             ax = axes,
              axlabel = False,
              hist=False, 
              label="CaBi Plus", 
              color='black')
 
-plt.suptitle("Density of CaBi Member Trips", fontsize=20)
-
-plt.savefig('../plots_output/cabi_distribution.png')
+plt.savefig('../plots_output/month2_tweets/tweet6_cabi_speed.png')
 
