@@ -72,8 +72,8 @@ if __name__ == "__main__":
     uf.set_env_path()
     conn, cur = uf.local_connect()
     # Define Range of Date to pull forecast and turn into a list
-    start_date = datetime.datetime(2018, 10, 1)
-    end_date = datetime.datetime(2018, 10, 31)
+    start_date = datetime.datetime(2018, 11, 1)
+    end_date = datetime.datetime(2018, 11, 30)
     delta = end_date - start_date
     date_list = [start_date + datetime.timedelta(days=i) for i in range(delta.days + 1)]
     # Define API Key List

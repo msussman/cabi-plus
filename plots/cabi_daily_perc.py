@@ -36,6 +36,7 @@ def query(con):
                                     THEN bike_number ELSE NULL END) as total_cabi_plus_trips
                                     FROM cabi_trips
                                     WHERE start_date >= '2018-09-05'
+                                    AND start_date < '2018-12-01'
                                     )
 
                             SELECT 
@@ -88,6 +89,6 @@ if __name__ == "__main__":
     )
     
     chart = alt.layer(line, bar).resolve_scale(y='independent')
-    chart.save('../plots_output/cabi_daily_perc.html')
+    chart.save('../plots_output/month3/cabi_daily_perc.html')
      
 

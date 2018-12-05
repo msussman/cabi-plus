@@ -63,6 +63,7 @@ def query(con):
                             ON cabi_trips.end_station = end_coords.short_name
 
                             WHERE start_date::date >= '2018-09-05'
+                            AND start_date < '2018-12-01'
                             AND end_date > start_date
                             AND member_type = 'Member'
                             ;
@@ -92,4 +93,4 @@ if __name__ == "__main__":
                           aggfunc=len)
     
     print(table)
-    table.to_csv('test.csv')
+    table.to_csv('../plots_output/month3/by_ward.csv')

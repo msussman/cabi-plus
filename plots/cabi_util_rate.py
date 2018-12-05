@@ -58,7 +58,7 @@ def cabi_util_rate(con):
                             THEN cabi_bikes.bike_number ELSE NULL END) as cabi_plus_fleet  
                             FROM generate_series(
                                         '2018-09-05',
-                                        '2018-10-31',
+                                        '2018-11-30',
                                         interval '1 day') as d    
                             /* Total CaBi Fleet Count*/
                             LEFT JOIN cabi_bikes as cabi_bikes
@@ -170,6 +170,6 @@ if __name__ == "__main__":
 
     util_chart = fleet_chart | used_chart
 
-    util_chart.save('../plots_output/cabi_util_rate.html')
+    util_chart.save('../plots_output/month3/cabi_util_rate.html')
      
 

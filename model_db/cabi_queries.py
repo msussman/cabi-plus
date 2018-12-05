@@ -9,7 +9,7 @@ def cabi_trips_by_member(conn):
                         /*Total Trips*/
                         COUNT(*) as cabi_trips
                         from cabi_trips as trips
-                        /*WHERE start_date::date >= '2017-09-20'*/
+                        WHERE start_date::date < '2018-12-01'
                         GROUP by 1, 2;
                  """, con=conn)
     return df
@@ -26,10 +26,9 @@ def cabi_bikes_available(conn):
                               (date_trunc('month', MAX(start_date)) + interval '1 month')::date AS bike_max_date
 
                             FROM cabi_trips
+                            WHERE start_date::date < '2018-12-01'
                             GROUP BY 1) as cabi_bikes
                           ON ds.weather_date BETWEEN cabi_bikes.bike_min_date AND cabi_bikes.bike_max_date
-                          /*TEMPORARY where statement for efficient testing*/
-                          /*WHERE ds.weather_date >= '2017-09-20'*/
                           GROUP BY 1;
                      """, con=conn)
     return df
@@ -54,6 +53,7 @@ def cabi_stations_available(conn):
                             MIN(start_date::timestamp::date) AS station_min_date,
                             (date_trunc('month', MAX(start_date)) + interval '1 month')::date AS station_max_date
                             FROM cabi_trips
+                            WHERE start_date::date < '2018-12-01'
                             GROUP BY 1)
                           union
                           (SELECT DISTINCT
@@ -61,6 +61,7 @@ def cabi_stations_available(conn):
                             MIN(start_date::timestamp::date) AS station_min_date,
                             (date_trunc('month', MAX(start_date)) + interval '1 month')::date AS station_max_date
                             FROM cabi_trips
+                            WHERE start_date::date < '2018-12-01'
                             GROUP BY 1)) as stations
                           /* Bring on Region Code from cabi station and system API data*/
                           JOIN (SELECT distinct
@@ -73,9 +74,7 @@ def cabi_stations_available(conn):
                                      )
                           GROUP BY 1
                           ORDER BY 1)) as cabi_stations
-                        ON ds.weather_date BETWEEN cabi_stations.station_min_date AND cabi_stations.station_max_date
-                        /*TEMPORARY where statement for efficient testing*/
-                        /*WHERE ds.weather_date >= '2017-09-20'*/
+                        ON ds.weather_date BETWEEN cabi_stations.station_min_date AND cabi_stations.station_max_date              
                         GROUP BY 1;
                         """, con=conn)
     return df

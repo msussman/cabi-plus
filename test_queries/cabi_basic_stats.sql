@@ -11,5 +11,6 @@ SUM(CASE WHEN member_type = 'Casual' THEN 1 ELSE 0 END) as casual_trips,
 SUM(CASE WHEN member_type = 'Member' THEN 1 ELSE 0 END) as member_trips
 FROM cabi_trips
 WHERE start_date >= '2018-09-05'
+AND start_date < '2018-12-01'
 GROUP BY 1, 2
 ORDER By 2, 1;
