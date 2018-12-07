@@ -82,7 +82,7 @@ def main():
     plt.plot('t', 'error', data=data, color='gray')
     plt.legend()
     plt.show()
-    plt.savefig('output/{algo}_results.png')
+    plt.savefig(f'output/{algo}_results.png')
 
     neterror = data['error'].sum()
     print(f'On net, our errors are {neterror}')
