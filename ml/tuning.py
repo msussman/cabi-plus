@@ -5,9 +5,11 @@ Input:
     Raw data
 
 Output:
+    Printed diagnostics
     Pickled model
 """
 
+import os
 import sys
 import time
 import numpy as np
@@ -18,20 +20,30 @@ from sklearn.model_selection import KFold, \
     GridSearchCV, cross_val_score
 from sklearn.metrics import r2_score
 from sklearn.metrics import mean_squared_error as mse
-from sklearn.ensemble import RandomForestRegressor
+from sklearn.ensemble import RandomForestRegressor, AdaBoostRegressor
 from sklearn.externals import joblib
 
-def everything():
-    print('Running ', sys.argv[0], sys.argv[1])
+def main():
+    print('Running', sys.argv[0], sys.argv[1])
     start_time = time.perf_counter()
     today = dt.datetime.today().strftime('%Y%m%d_%H%M%S')
     algo = str(sys.argv[1])
+    random_state = np.random.randint(1000000)
+
+    path = 'output/'
+
+    try:
+        os.mkdir(path)
+    except OSError:
+        print(f'Creation of {path} failed')
+    else:
+        print(f'Successfully created the directory {path}')
 
     # Load data
     Xtrain, Xtest, ytrain, ytest = dataload()
 
     # Check pairwise correlation
-    def corrprint(df, threshold=0.65):
+    def corrprint(df, threshold=0.5):
         corr_df = df.corr()
         corred = np.where(np.abs(corr_df) > threshold)
         corred = [(corr_df.iloc[x,y], x, y) for x, y in zip(*corred) if x != y and x < y]
@@ -59,23 +71,28 @@ def everything():
             'max_depth': np.arange(0, 24, 3),
             }
 
+    ada_params {
+            'n_estimators': np.arange(50, 500, 10),
+            'loss': ['linear', 'square', 'exponential']
+            }
+
     params = {
             'rf': rf_params,
-            'xg': xg_params
+            'xg': xg_params,
+            'ada': ada_params,
             }
 
     regs = {
             'rf': RandomForestRegressor(max_depth=None),
-            'xg': XGBRegressor(booster='gbtree')
+            'xg': XGBRegressor(booster='gbtree'),
+            'ada': AdaBoostRegressor(random_state=random_state)
             }
 
-    reg = regs[algo]
-    random_state = np.random.randint(1000000)
     print('\nRandom_state for KFold: ', random_state)
     cv = KFold(n_splits=12, shuffle=True, random_state=random_state)
 
     search = GridSearchCV(
-            estimator=reg,
+            estimator=regs[algo],
             param_grid=params[algo],
             scoring='r2',
             cv=cv,
@@ -87,8 +104,8 @@ def everything():
 
     search.fit(Xtrain, ytrain)
     model = search.best_estimator_
-    print('\n', model)
-    joblib.dump(model, f'output/{algo}_{today}.pkl')
+    print(model)
+    joblib.dump(model, path + f'{algo}_{today}.pkl')
 
     ''' Diagnostics and Output '''
 
@@ -124,4 +141,4 @@ def everything():
     print(f'Runtime: {round(end_time, 2)} minutes')
 
 if __name__ == '__main__':
-    everything()
+    main()

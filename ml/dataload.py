@@ -23,8 +23,8 @@ def dataload():
     df.insert(0, 'time', range(0, len(df)))
 
     # Train-test split
-    train = df.loc[:'2017-12-31']
-    test = df.loc['2018-01-01':]
+    train = df.loc[:'2018-09-04']
+    test = df.loc['2018-09-05':]
 
     # Possible target variables
     target_cols = [

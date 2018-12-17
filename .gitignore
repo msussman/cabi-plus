@@ -12,3 +12,5 @@ plots_output/
 plots/\.ipynb_checkpoints/
 
 *.png
+
+.spyproject/
