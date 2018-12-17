@@ -71,7 +71,7 @@ def main():
             'max_depth': np.arange(0, 24, 3),
             }
 
-    ada_params {
+    ada_params = {
             'n_estimators': np.arange(50, 500, 10),
             'loss': ['linear', 'square', 'exponential']
             }
