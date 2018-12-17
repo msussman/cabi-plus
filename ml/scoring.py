@@ -50,11 +50,6 @@ def main():
     model = joblib.load(filename[0])
     model.fit(Xtrain, ytrain)
 
-    # Printing random state for reproducibility
-    # For now just using random_state=7
-    #random_state = np.random.randint()
-    #print('Seed:', random_state)
-
     def cv_score(model, n_splits=12):
         """
         Evaluates a model by 12-fold cross-validation and
@@ -67,36 +62,24 @@ def main():
         print(scores)
         print("R^2: {:0.3f} (+/- {:0.3f})".format(scores.mean(), 2*scores.std()))
 
-    def score_model(model):
-        """
-        Fits a model using the training set, predicts using the test set, and then calculates
-        and reports goodness of fit metrics.
-        """
-        model.fit(Xtrain, ytrain)
-        yhat = model.predict(Xtest)
-        r2 = round(r2_score(ytest, yhat), 3)
-        msqe = round(mse(ytest, yhat), 2)
-        mabe = round(mae(ytest, yhat), 2)
-        print(f'Results from {model}: \nr2={r2} \nMSE={msqe} \nMAE={mabe}')
-
-    print(f'12-fold CV score for {algo} (full test set): \n')
+    print(f'12-fold CV score for {algo}: \n')
     cv_score(model)
-    print(f'Train-test-split score for {algo} (full test set): \n')
-    score_model(model)
 
     yhat = model.predict(Xtest)
 
     r2 = round(r2_score(ytest, yhat), 3)
     msqe = round(mse(ytest, yhat), 2)
     mabe = round(mae(ytest, yhat), 2)
-    error = ytest - yhat
+
+    print('R^2: ', r2)
+    print('MSE: ', msqe)
+    print('MAE: ', mabe)
 
     data = pd.DataFrame({'t': ytest.index,
                          'ytest': ytest,
                          'yhat': yhat,
-                         'error': error})
+                         'error': ytest - yhat})
 
-    # Save plot
     plt.plot('t', 'ytest', data=data, color='blue', linewidth=1, label='actual')
     plt.plot('t', 'yhat', data=data, color='orange', marker='o', linestyle="None", label='predicted', alpha=0.5)
     plt.plot('t', 'error', data=data, color='gray')
@@ -104,7 +87,6 @@ def main():
     plt.title(f'r2: {r2}, mse: {msqe}, mae: {mabe}')
     plt.legend()
     plt.savefig(path + f'{algo}_results_{today}.png')
-    #plt.show()
 
     neterror = data['error'].sum()
     print(f'Net error for {algo}: {neterror}')

@@ -43,7 +43,7 @@ def main():
     Xtrain, Xtest, ytrain, ytest = dataload()
 
     # Check pairwise correlation
-    def corrprint(df, threshold=0.5):
+    def corrprint(df, threshold=0.7):
         corr_df = df.corr()
         corred = np.where(np.abs(corr_df) > threshold)
         corred = [(corr_df.iloc[x,y], x, y) for x, y in zip(*corred) if x != y and x < y]
@@ -57,16 +57,16 @@ def main():
     ''' Hyperparameter Tuning '''
 
     rf_params = {
-            'n_estimators': [50, 100, 150, 200, 250],
+            'n_estimators': [50, 100, 150, 200],
             'max_depth': [50, 100, 250, None],
             'min_samples_split': [2, 5, 10],
             'min_samples_leaf': [1, 2, 3, 4],
             'bootstrap': [True, False],
-            'max_features': ['auto', 'sqrt'],
+            'max_features': ['auto', 0.33],
             }
 
     xg_params = {
-            'eta': np.arange(0, 1.1, .1),
+            'eta': [0, 0.01, 0.05, 0.1, 0.15, 0.2],
             'gamma': np.arange(0, 55, 5),
             'max_depth': np.arange(0, 24, 3),
             }
