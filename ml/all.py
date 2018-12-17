@@ -32,7 +32,6 @@ def everything():
 
     # Establish Connection
     con = sqlite3.connect(r'data/for_ml.db')
-    cur = con.cursor()
 
     df = pd.read_sql("""SELECT
                         *

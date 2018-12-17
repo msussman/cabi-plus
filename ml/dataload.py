@@ -19,10 +19,12 @@ def dataload():
     # Putting date in index
     df.set_index('date', inplace=True)
     df.index = pd.to_datetime(df.index)
+    df = df.sort_index()
+    df.insert(0, 'time', range(0, len(df)))
 
     # Train-test split
-    train = df.loc[:'2018-09-04']
-    test = df.loc['2018-09-05':]
+    train = df.loc[:'2017-12-31']
+    test = df.loc['2018-01-01':]
 
     # Possible target variables
     target_cols = [
@@ -42,7 +44,7 @@ def dataload():
             'year', 'quarter', 'dewpoint', 'nats_attendance', 'sleet',
             'windbearing', 'moonphase', 'apparenttemperaturehightime',
             'apparenttemperaturelowtime', 'precipintensity',
-            'sunrisetime', 'sunsettime'
+            'sunrisetime', 'sunsettime', 'dc_pop',
             ]
 
     drop_cols = target_cols + cabi_cols + other_cols
