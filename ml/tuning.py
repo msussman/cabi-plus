@@ -73,7 +73,8 @@ def main():
 
     ada_params = {
             'n_estimators': np.arange(50, 500, 10),
-            'loss': ['linear', 'square', 'exponential']
+            'loss': ['linear', 'square', 'exponential'],
+            'learning_rate': [0.01, 0.1, 0.5, 1.0, 1.5, 2],
             }
 
     params = {
