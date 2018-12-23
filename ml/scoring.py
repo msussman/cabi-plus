@@ -20,15 +20,14 @@ import datetime as dt
 from dataload import dataload
 from sklearn.externals import joblib
 from sklearn.model_selection import KFold, cross_val_score
-from sklearn.metrics import r2_score
-from sklearn.metrics import mean_squared_error as mse
-from sklearn.metrics import mean_absolute_error as mae
+from sklearn.metrics import r2_score, mean_squared_error, \
+    mean_absolute_error, mean_squared_log_error
 import matplotlib.pyplot as plt
 
 start_time = time.perf_counter()
 
 def main():
-    print('Printing from ', sys.argv[0], sys.argv[1])
+    print('Printing from', sys.argv[0], sys.argv[1])
     algo = sys.argv[1]
     today = dt.datetime.today().strftime('%Y%m%d_%H%M%S')
 
@@ -46,8 +45,9 @@ def main():
     Xtrain, Xtest, ytrain, ytest = dataload()
 
     # Load model - sort by descending for the most recent
-    filename = sorted(glob.glob(f'output/*{algo}*.pkl'), reverse=True)
-    model = joblib.load(filename[0])
+    model_name = sorted(glob.glob(f'output/*{algo}*.pkl'), reverse=True)
+    print('Model: ', model_name[0])
+    model = joblib.load(model_name[0])
     model.fit(Xtrain, ytrain)
 
     def cv_score(model, n_splits=12):
@@ -68,29 +68,30 @@ def main():
     yhat = model.predict(Xtest)
 
     r2 = round(r2_score(ytest, yhat), 3)
-    msqe = round(mse(ytest, yhat), 2)
-    mabe = round(mae(ytest, yhat), 2)
+    mse = round(mean_squared_error(ytest, yhat), 2)
+    mae = round(mean_absolute_error(ytest, yhat), 2)
+    msle = round(mean_squared_log_error(ytest, yhat), 2)
 
-    print('R^2: ', r2)
-    print('MSE: ', msqe)
-    print('MAE: ', mabe)
+    print('\nR^2: ', r2)
+    print('MSE: ', mse)
+    print('MAE: ', mae)
 
     data = pd.DataFrame({'t': ytest.index,
                          'ytest': ytest,
                          'yhat': yhat,
                          'error': ytest - yhat})
 
+    mbe = round(data['error'].sum()/len(data), 2)
+    print(f'Mean Bias Error for {algo}: {mbe}')
+    print('Positive MBE signifies underprediction overall')
+
     plt.plot('t', 'ytest', data=data, color='blue', linewidth=1, label='actual')
     plt.plot('t', 'yhat', data=data, color='orange', marker='o', linestyle="None", label='predicted', alpha=0.5)
     plt.plot('t', 'error', data=data, color='gray')
     plt.suptitle(f'{algo} results over the DoBi period')
-    plt.title(f'r2: {r2}, mse: {msqe}, mae: {mabe}')
+    plt.title(f'r2: {r2}, mse: {mse}, mae: {mae}, msle: {msle}, mbe: {mbe}')
     plt.legend()
     plt.savefig(path + f'{algo}_results_{today}.png')
-
-    neterror = data['error'].sum()
-    print(f'Net error for {algo}: {neterror}')
-    print('Positive net error signifies underprediction (overall)')
 
     # Save data from plot
     data.to_csv(path + f'{algo}_predicted_{today}.csv', index=False)
@@ -103,8 +104,8 @@ def main():
 
     feature_importances.to_csv(path + f'{algo}_features_{today}.csv')
 
-    end_time = (time.perf_counter() - start_time)/60
-    print(f'Runtime: {round(end_time, 2)} minutes')
+    end_time = time.perf_counter() - start_time
+    print(f'Runtime: {round(end_time, 2)} seconds')
 
 if __name__ == '__main__':
     main()

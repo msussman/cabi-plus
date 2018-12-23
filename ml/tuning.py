@@ -83,7 +83,7 @@ def main():
             }
 
     regs = {
-            'rf': RandomForestRegressor(max_depth=None),
+            'rf': RandomForestRegressor(),
             'xg': XGBRegressor(booster='gbtree'),
             'ada': AdaBoostRegressor(random_state=random_state)
             }
